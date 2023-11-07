@@ -1,88 +1,66 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_traitement.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moturki <marvin@42lausanne.ch>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/26 21:16:54 by moturki           #+#    #+#             */
+/*   Updated: 2023/11/07 19:19:46 by moturki          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
-t_list	ft_printunsigned(t_list lst)
+t_list	ft_traitement_hexa(t_list info, char c)
 {
-	unsigned int	n;
+	unsigned int	nb;
 
-	n = va_arg(lst.args, unsigned int);
-	ft_putnbr(n);
-	while (n >= 10)
-	{
-		n /= 10;
-		lst.tl++;
-	}
-	lst.tl++;
-	return (lst);
+	nb = va_arg(info.args, unsigned int);
+	info.tl += ft_putnbr_base(nb, 16, c, 0);
+	return (info);
 }
 
-t_list	ft_printnum(t_list lst)
+t_list	ft_traitement_ptr(t_list info, char c)
 {
-	int		n;
+	size_t	nb;
 
-	n = va_arg(lst.args, long long);
-	ft_putnbr(n);
-	if (n < 0)
-	{
-		if (n == -2147483648)
-		{
-			lst.tl += 11;
-			return (lst);
-		}
-		lst.tl++;
-		n *= -1;
-	}
-	while (n >= 10)
-	{
-		n /= 10;
-		lst.tl++;
-	}
-	lst.tl++;
-	return (lst);
+	nb = va_arg(info.args, size_t);
+	info.tl += write(1, "0x", 2) + ft_putnbr_base(nb, 16, c, 0);
+	return (info);
 }
 
-t_list	ft_printstring(t_list lst)
+t_list	ft_traitement_unsigned(t_list info, char c)
+{
+	unsigned int	nb;
+
+	nb = va_arg(info.args, unsigned int);
+	info.tl += ft_putnbr_base(nb, 10, c, 0);
+	return (info);
+}
+
+t_list	ft_traitement_int(t_list info, char c)
+{
+	int				nb;
+
+	nb = va_arg(info.args, int);
+	info.tl += ft_putnbr_base(nb, 10, c, 0);
+	return (info);
+}
+
+t_list	ft_traitement_string(t_list info)
 {
 	char	*str;
 	size_t	i;
 
 	i = 0;
-	str = va_arg(lst.args, char *);
+	str = va_arg(info.args, char *);
 	if (!str)
 	{
-		lst.tl += write(1, "(null)", 6);
-		return (lst);
+		info.tl += write(1, "(null)", 6);
+		return (info);
 	}
 	while (str[i])
-		lst.tl += write(1, &str[i++], 1);
-	return (lst);
-}
-
-t_list	ft_printchar(t_list lst)
-{
-	int		c;
-
-	c = va_arg(lst.args, int);
-	lst.tl += write(1, &c, 1);
-	return (lst);
-}
-
-t_list	ft_traitement(char const format, t_list lst)
-{
-	if (format == 'c')
-		lst = ft_printchar(lst);
-	else if (format == 's')
-		lst = ft_printstring(lst);
-	else if (format == 'i' || format == 'd')
-		lst = ft_printnum(lst);
-	else if (format == 'u')
-		lst = ft_printunsigned(lst);
-	else if (format == 'x')
-		lst = ft_printhexa(lst, 1);
-	else if (format == 'X')
-		lst = ft_printhexa(lst, 2);
-	else if (format == 'p')
-		lst = ft_printptr(lst);
-	else if (format == '%')
-		lst.tl += write(1, "%", 1);
-	return (lst);
+		info.tl += write(1, &str[i++], 1);
+	return (info);
 }

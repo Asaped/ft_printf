@@ -1,53 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_utils.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moturki <marvin@42lausanne.ch>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/10/24 21:42:00 by moturki           #+#    #+#             */
+/*   Updated: 2023/11/07 19:20:23 by moturki          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "ft_printf.h"
 
-void	ft_putchar(char c)
+int	ft_putnbr_base(long long int nb, unsigned int base, char c, int count)
 {
-	write(1, &c, 1);
-}
+	size_t	nbr;
+	char	*str;
 
-void	ft_putnbr_ptr(unsigned long long n)
-{
-	char	*tab;
-
-	tab = "0123456789abcdef";
-	if (n > 15)
+	if (base == 10)
+		str = "0123456789";
+	else if (c == 'x' || c == 'p')
+		str = "0123456789abcdef";
+	else
+		str = "0123456789ABCDEF";
+	if (nb < 0 && c != 'p')
 	{
-		ft_putnbr_ptr(n / 16);
-		ft_putnbr_ptr(n % 16);
+		nbr = (size_t)(-nb);
+		count += write(1, "-", 1);
 	}
 	else
-		write(1, &tab[n], 1);
-}
-
-void	ft_putnbr_hexa(unsigned int n, size_t mode)
-{
-	char	*tab;
-
-	if (mode == 1)
-		tab = "0123456789abcdef";
-	if (mode == 2)
-		tab = "0123456789ABCDEF";
-	if (n > 15)
+		nbr = (size_t)nb;
+	if (nbr >= base)
 	{
-		ft_putnbr_hexa(n / 16, mode);
-		ft_putnbr_hexa(n % 16, mode);
+		count += ft_putnbr_base(nbr / base, base, c, 0);
+		count += ft_putnbr_base(nbr % base, base, c, 0);
 	}
 	else
-		write(1, &tab[n], 1);
-}
-
-void	ft_putnbr(long long n)
-{
-	if (n < 0)
-	{
-		n *= -1;
-		write(1, "-", 1);
-	}
-	if (n > 9)
-	{
-		ft_putnbr(n / 10);
-		ft_putnbr(n % 10);
-	}
-	else
-		ft_putchar(n + 48);
+		count += write(1, &str[nbr], 1);
+	return (count);
 }

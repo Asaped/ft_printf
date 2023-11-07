@@ -1,27 +1,26 @@
-NAME		=	libftprintf.a
+SRCS	 = ft_printf.c ft_traitement.c ft_utils.c
 
-SRCS		=	ft_printf.c ft_traitement.c ft_utils.c ft_traitement_the_awakening.c
+OBJS	 = $(SRCS:.c=.o)
 
-OBJS		=	$(SRCS:.c=.o)
+NAME	 = libftprintf.a
 
-CC			=	gcc
+CC		 = gcc
 
-CFLAGS		=	-Wall -Werror -Wextra
+CFLAGS	 = -Wall -Wextra -Werror
 
-RM			=	rm -f
+RM		 = rm -rf
 
-all			:	$(NAME)
+all	 	 : $(NAME)
 
-$(NAME)		:	$(OBJS)
-				ar rcs $(NAME) $(OBJS)
+$(NAME)	 : $(OBJS)
+		ar rcs $(NAME) $(OBJS)
 
-clean		: 
-				$(RM) $(OBJS)
+clean	 :
+		$(RM) $(OBJS)
 
-fclean		:	clean
-				$(RM) $(NAME)
+fclean	 : clean
+		$(RM) $(NAME)
 
-re			:	fclean all
+re		 : fclean all
 
-.PHONY		:	all clean fclean re
-
+.PHONY	 : all fclean clean re
